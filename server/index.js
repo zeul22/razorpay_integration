@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import { dbConnect } from "./db/dbconfig.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import Razorpay from "razorpay";
+
 dotenv.config({
   path: "./.env",
 });
@@ -17,8 +19,19 @@ app.use(
 );
 app.use(express.json());
 
-dbConnect().then(
-  app.listen(process.env.PORT, (req, res) => {
-    console.log(`Server is running on port ${process.env.PORT}`);
-  })
-);
+export const instance = new Razorpay({
+  key_id: `${process.env.KEY_ID}`,
+  key_secret: `${process.env.KEY_SECRET}`,
+});
+
+
+dbConnect()
+  .then(
+    app.listen(process.env.PORT, () => {
+      console.log(`Server is running on port ${process.env.PORT}`);
+    })
+  )
+  .catch(console.log(`Error running the server!`));
+
+import router from "./routes/payment.routes.js";
+app.use("/api", router);
