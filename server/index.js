@@ -18,12 +18,12 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 export const instance = new Razorpay({
   key_id: `${process.env.KEY_ID}`,
   key_secret: `${process.env.KEY_SECRET}`,
 });
-
 
 dbConnect()
   .then(
@@ -35,3 +35,7 @@ dbConnect()
 
 import router from "./routes/payment.routes.js";
 app.use("/api", router);
+
+app.get("/api/verification/getkey", (req, res) =>
+  res.status(200).json({ key: process.env.KEY_ID })
+);
